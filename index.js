@@ -723,7 +723,7 @@ class Body extends BElement {
             }
             // Line Break
             if (line.substr(-1) === '~')
-                line = line.substr(0, line.length - 1) + "\r";
+                line = line.substr(0, line.length - 1) + "<br>";
             // Other Character
             if (this.classes[head]) {
                 let classname = this.classes[head];
