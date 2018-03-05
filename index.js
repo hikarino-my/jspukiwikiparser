@@ -1,18 +1,8 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var contents_id = 0;
-var line_break = 0;
-var preformat_ltrim = 1;
-var _symbol_anchor = '&dagger;';
-var config = {
+let contents_id = 0;
+const line_break = 0;
+const preformat_ltrim = 1;
+const _symbol_anchor = '&dagger;';
+const config = {
     // リスト構造の左マージン
     _ul_left_margin: 0,
     _ul_margin: 16,
@@ -21,59 +11,55 @@ var config = {
     _dl_left_margin: 0,
     _dl_margin: 16
 };
-var msg_content_back_to_top = '<div class="jumpmenu"><a href="#navigator">&uarr;</a></div>';
-function ltrim(stringToTrim, pattern) {
-    if (pattern === void 0) { pattern = /^\s+/; }
+const msg_content_back_to_top = '<div class="jumpmenu"><a href="#navigator">&uarr;</a></div>';
+function ltrim(stringToTrim, pattern = /^\s+/) {
     return stringToTrim.replace(pattern, "");
 }
-var exist_plugin_convert = function (uuu) { return false; };
-function rtrim(stringToTrim, pattern) {
-    if (pattern === void 0) { pattern = /\s+$/; }
+const exist_plugin_convert = uuu => false;
+function rtrim(stringToTrim, pattern = /\s+$/) {
     return stringToTrim.replace(pattern, "");
 }
 // Make heading string (remove heading-related decorations from Wiki text)
-function make_heading(str, strip) {
-    if (strip === void 0) { strip = true; }
+function make_heading(str, strip = true) {
     // Cut fixed-heading anchors
-    var id = '';
-    var matches = str.match(/^(\*{0,3})(.*?)\[#([A-Za-z][\w-]+)\](.*?)$/m);
+    let id = '';
+    let matches = str.match(/^(\*{0,3})(.*?)\[#([A-Za-z][\w-]+)\](.*?)$/m);
     if (matches) {
         str = matches[2] + matches[4];
-        var id_1 = matches[3];
+        let id = matches[3];
     }
     else {
         str = str.replace(/^\*{0,3}/, '');
     }
     return id;
 }
-var hr = '<hr class="full_hr" />';
-var strspn = function (str1, str2, start, lgth) {
-    if (start === void 0) { start = 0; }
-    var found;
-    var stri;
-    var strj;
-    var j = 0;
-    var i = 0;
+const hr = '<hr class="full_hr" />';
+const strspn = (str1, str2, start = 0, lgth) => {
+    let found;
+    let stri;
+    let strj;
+    let j = 0;
+    let i = 0;
     start = start < 0 ? (str1.length + start) : start;
     lgth = lgth ? ((lgth < 0) ? (str1.length + lgth - start) : lgth) : str1.length - start;
     str1 = str1.substr(start, lgth);
-    for (var i_1 = 0; i_1 < str1.length; i_1++) {
-        var found_1 = 0;
-        stri = str1.substring(i_1, i_1 + 1);
-        for (var j_1 = 0; j_1 <= str2.length; j_1++) {
-            strj = str2.substring(j_1, j_1 + 1);
+    for (let i = 0; i < str1.length; i++) {
+        let found = 0;
+        stri = str1.substring(i, i + 1);
+        for (let j = 0; j <= str2.length; j++) {
+            strj = str2.substring(j, j + 1);
             if (stri === strj) {
-                found_1 = 1;
+                found = 1;
                 break;
             }
         }
-        if (found_1 !== 1) {
-            return i_1;
+        if (found !== 1) {
+            return i;
         }
     }
     return i;
 };
-var htmlsc = function (string) {
+const htmlsc = (string) => {
     return string.replace(/[&'`"<>]/g, function (match) {
         return {
             '&': '&amp;',
@@ -81,21 +67,21 @@ var htmlsc = function (string) {
             '`': '&#x60;',
             '"': '&quot;',
             '<': '&lt;',
-            '>': '&gt;'
+            '>': '&gt;',
         }[match];
     });
 };
-var _list_pad_str = function (list, padl, marl) {
-    return " class=\"list" + list + "\" style=\"padding-left:" + padl + "px;margin-left:" + marl + "px\"";
+const _list_pad_str = (list, padl, marl) => {
+    return ` class="list${list}" style="padding-left:${padl}px;margin-left:${marl}px"`;
 };
 function convert_html(lines) {
     contents_id = contents_id++;
-    var body = new Body(contents_id);
+    const body = new Body(contents_id);
     body.parse(lines);
     return body.toString();
 }
 // Returns inline-related object
-var Factory_Inline = function (text) {
+const Factory_Inline = (text) => {
     // Check the first letter of the line
     if (text.slice(0, 1) === '~') {
         return new Paragraph(' ' + text.slice(1));
@@ -104,8 +90,8 @@ var Factory_Inline = function (text) {
         return new Inline(text);
     }
 };
-var Factory_DList = function (root, text) {
-    var out = ltrim(text).split('|', 2);
+const Factory_DList = (root, text) => {
+    let out = ltrim(text).split('|', 2);
     if (out.length < 2) {
         return Factory_Inline(text);
     }
@@ -115,7 +101,7 @@ var Factory_DList = function (root, text) {
 };
 // '|'-separated table
 function Factory_Table(root, text) {
-    var match = text.match(/^\|(.+)\|([hHfFcC]?)$/);
+    let match = text.match(/^\|(.+)\|([hHfFcC]?)$/);
     if (!match) {
         return Factory_Inline(text);
     }
@@ -131,281 +117,247 @@ function Factory_Table(root, text) {
         return new YTable(csv_explode(',', substr($text, 1)));
     }
 }*/
-var Factory_Div = function (root, text) {
-    var matches = text.match(/^\#([^\(]+)(?:\((.*)\))?/);
+const Factory_Div = (root, text) => {
+    const matches = text.match(/^\#([^\(]+)(?:\((.*)\))?/);
     if (matches && exist_plugin_convert(matches[1])) {
         return new Div(matches);
     }
     return new Paragraph(text);
 };
 // Block elements
-var BElement = /** @class */ (function () {
-    function BElement() {
+class BElement {
+    constructor() {
         this.elements = []; // References of childs
         this.last = this;
     }
-    BElement.prototype.setParent = function (parent) {
+    setParent(parent) {
         this.parent = parent;
-    };
-    BElement.prototype.add = function (obj) {
+    }
+    add(obj) {
         if (this.canContain(obj)) {
             return this.insert(obj);
         }
         else {
             return this.parent.add(obj);
         }
-    };
-    BElement.prototype.insert = function (obj) {
+    }
+    insert(obj) {
         obj.setParent(this);
         this.elements.push(obj);
         return this.last = obj.last;
-    };
-    BElement.prototype.canContain = function (obj) {
+    }
+    canContain(obj) {
         return true;
-    };
-    BElement.prototype.wrap = function (string, tag, param, canomit) {
-        if (param === void 0) { param = ''; }
-        if (canomit === void 0) { canomit = true; }
+    }
+    wrap(string, tag, param = '', canomit = true) {
         return (canomit && string === '') ? '' :
             '<' + tag + param + '>' + string + '</' + tag + '>';
-    };
-    BElement.prototype.toString = function () {
-        var ret = [];
-        this.elements.forEach(function (val) {
+    }
+    toString() {
+        let ret = [];
+        this.elements.forEach(val => {
             ret.push(val.toString());
         });
         return ret.join("\n");
-    };
-    BElement.prototype.dump = function (indent) {
-        if (indent === void 0) { indent = 0; }
-        var ret = ' '.repeat(indent) + this.constructor.name + "\n";
+    }
+    dump(indent = 0) {
+        let ret = ' '.repeat(indent) + this.constructor.name + "\n";
         indent += 2;
-        this.elements.forEach(function (val) {
+        this.elements.forEach(val => {
             ret += val;
         });
         return ret;
-    };
-    return BElement;
-}());
+    }
+}
 // Paragraph: blank-line-separated sentences
-var Paragraph = /** @class */ (function (_super) {
-    __extends(Paragraph, _super);
-    function Paragraph(text, param) {
-        if (param === void 0) { param = ''; }
-        var _this = _super.call(this) || this;
-        _this.param = param;
+class Paragraph extends BElement {
+    constructor(text, param = '') {
+        super();
+        this.param = param;
         if (text === '')
-            return _this;
+            return;
         if (text.substr(0, 1) === '~')
             text = ' ' + text.substr(1);
-        _super.prototype.insert.call(_this, Factory_Inline(text));
-        return _this;
+        super.insert(Factory_Inline(text));
     }
-    Paragraph.prototype.canContain = function (obj) {
+    canContain(obj) {
         return obj instanceof Inline;
-    };
-    Paragraph.prototype.toString = function () {
-        return _super.prototype.wrap.call(this, _super.prototype.toString.call(this), 'p', this.param);
-    };
-    return Paragraph;
-}(BElement));
-// Inline elements
-var Inline = /** @class */ (function (_super) {
-    __extends(Inline, _super);
-    function Inline(text) {
-        var _this = _super.call(this) || this;
-        _this.elements = [];
-        _this.elements.push(text.substr(0, 1).trim() === "\n" ?
-            text : text);
-        return _this;
     }
-    Inline.prototype.insert = function (obj) {
+    toString() {
+        return super.wrap(super.toString(), 'p', this.param);
+    }
+}
+// Inline elements
+class Inline extends BElement {
+    constructor(text) {
+        super();
+        this.elements = [];
+        this.elements.push(text.substr(0, 1).trim() === "\n" ?
+            text : text);
+    }
+    insert(obj) {
         this.elements.push(obj.elements[0]);
         return this;
-    };
-    Inline.prototype.canContain = function (obj) {
+    }
+    canContain(obj) {
         return obj instanceof Inline;
-    };
-    Inline.prototype.toString = function () {
+    }
+    toString() {
         return this.elements.join(line_break ? '<br />\n' : "\n");
-    };
-    Inline.prototype.toPara = function (cls) {
-        if (cls === void 0) { cls = ''; }
-        var obj = new Paragraph('', cls);
+    }
+    toPara(cls = '') {
+        let obj = new Paragraph('', cls);
         obj.insert(this);
         return obj;
-    };
-    return Inline;
-}(BElement));
+    }
+}
 // * Heading1
 // ** Heading2
 // *** Heading3
-var Heading = /** @class */ (function (_super) {
-    __extends(Heading, _super);
-    function Heading(root, text) {
-        var _this = _super.call(this) || this;
-        _this.level = Math.min(3, strspn(text, '*'));
-        _a = root.getAnchor(text, _this.level), text = _a[0], _this.msg_top = _a[1], _this.id = _a[2];
-        _this.insert(Factory_Inline(text));
-        _this.level++; // h2,h3,h4
-        return _this;
-        var _a;
+class Heading extends BElement {
+    constructor(root, text) {
+        super();
+        this.level = Math.min(3, strspn(text, '*'));
+        [text, this.msg_top, this.id] = root.getAnchor(text, this.level);
+        this.insert(Factory_Inline(text));
+        this.level++; // h2,h3,h4
     }
-    Heading.prototype.insert = function (obj) {
-        _super.prototype.insert.call(this, obj);
+    insert(obj) {
+        super.insert(obj);
         return this.last = this;
-    };
-    Heading.prototype.canContain = function (obj) {
+    }
+    canContain(obj) {
         return false;
-    };
-    Heading.prototype.toString = function () {
-        return this.msg_top + this.wrap(_super.prototype.toString.call(this), "h" + this.level, " id=\"" + this.id + "\"");
-    };
-    return Heading;
-}(BElement));
+    }
+    toString() {
+        return this.msg_top + this.wrap(super.toString(), `h${this.level}`, ` id="${this.id}"`);
+    }
+}
 // ----
 // Horizontal Rule
-var HRule = /** @class */ (function (_super) {
-    __extends(HRule, _super);
-    function HRule(root, text) {
-        return _super.call(this) || this;
+class HRule extends BElement {
+    constructor(root, text) {
+        super();
     }
-    HRule.prototype.canContain = function (obj) {
+    canContain(obj) {
         return false;
-    };
-    HRule.prototype.toString = function () {
-        return hr;
-    };
-    return HRule;
-}(BElement));
-// Lists (UL, OL, DL)
-var ListContainer = /** @class */ (function (_super) {
-    __extends(ListContainer, _super);
-    function ListContainer(tag, tag2, head, text) {
-        var _this = _super.call(this) || this;
-        var var_margin = "_" + tag + "_margin";
-        var var_left_margin = "_" + tag + "_left_margin";
-        _this.margin = config[var_margin];
-        _this.left_margin = config[var_left_margin];
-        _this.tag = tag;
-        _this.tag2 = tag2;
-        _this.level = Math.min(3, strspn(text, head));
-        text = ltrim(text.substr(_this.level));
-        _super.prototype.insert.call(_this, new ListElement(_this.level, tag2));
-        if (text != '')
-            _this.last = _this.last.insert(Factory_Inline(text));
-        return _this;
     }
-    ListContainer.prototype.canContain = function (obj) {
+    toString() {
+        return hr;
+    }
+}
+// Lists (UL, OL, DL)
+class ListContainer extends BElement {
+    constructor(tag, tag2, head, text) {
+        super();
+        let var_margin = `_${tag}_margin`;
+        let var_left_margin = `_${tag}_left_margin`;
+        this.margin = config[var_margin];
+        this.left_margin = config[var_left_margin];
+        this.tag = tag;
+        this.tag2 = tag2;
+        this.level = Math.min(3, strspn(text, head));
+        text = ltrim(text.substr(this.level));
+        super.insert(new ListElement(this.level, tag2));
+        if (text != '')
+            this.last = this.last.insert(Factory_Inline(text));
+    }
+    canContain(obj) {
         return (!(obj instanceof ListContainer))
             || (this.tag === obj.tag && this.level === obj.level);
-    };
-    ListContainer.prototype.setParent = function (parent) {
-        _super.prototype.setParent.call(this, parent);
-        var step = this.level;
+    }
+    setParent(parent) {
+        super.setParent(parent);
+        let step = this.level;
         if (parent.parent && parent.parent instanceof ListContainer) {
             step -= parent.parent.level;
         }
-        var margin = this.margin * step;
+        let margin = this.margin * step;
         if (step === this.level) {
             margin += this.left_margin;
         }
         this.style = _list_pad_str(this.level, margin, margin);
-    };
-    ListContainer.prototype.insert = function (obj) {
-        var _this = this;
+    }
+    insert(obj) {
         if (!(obj instanceof ListContainer))
             return this.last = this.last.insert(obj);
         // Break if no elements found (BugTrack/524)
         if (obj.elements.length === 1 && !obj.elements[0].elements)
             return this.last.parent; // up to ListElement
         // Move elements
-        obj.elements.forEach(function (val) {
-            _super.prototype.insert.call(_this, val);
+        obj.elements.forEach(val => {
+            super.insert(val);
         });
         return this.last;
-    };
-    ListContainer.prototype.toString = function () {
-        return this.wrap(_super.prototype.toString.call(this), this.tag, this.style);
-    };
-    return ListContainer;
-}(BElement));
-var ListElement = /** @class */ (function (_super) {
-    __extends(ListElement, _super);
-    function ListElement(level, head) {
-        var _this = _super.call(this) || this;
-        _this.level = level;
-        _this.head = head;
-        return _this;
     }
-    ListElement.prototype.canContain = function (obj) {
+    toString() {
+        return this.wrap(super.toString(), this.tag, this.style);
+    }
+}
+class ListElement extends BElement {
+    constructor(level, head) {
+        super();
+        this.level = level;
+        this.head = head;
+    }
+    canContain(obj) {
         return (!(obj instanceof ListContainer) || (obj.level > this.level));
-    };
-    ListElement.prototype.toString = function () {
-        return this.wrap(_super.prototype.toString.call(this), this.head);
-    };
-    return ListElement;
-}(BElement));
+    }
+    toString() {
+        return this.wrap(super.toString(), this.head);
+    }
+}
 // - One
 // - Two
 // - Three
-var UList = /** @class */ (function (_super) {
-    __extends(UList, _super);
-    function UList(root, text) {
-        return _super.call(this, 'ul', 'li', '-', text) || this;
+class UList extends ListContainer {
+    constructor(root, text) {
+        super('ul', 'li', '-', text);
     }
-    return UList;
-}(ListContainer));
+}
 // + One
 // + Two
 // + Three
-var OList = /** @class */ (function (_super) {
-    __extends(OList, _super);
-    function OList(root, text) {
-        return _super.call(this, 'ol', 'li', '+', text) || this;
+class OList extends ListContainer {
+    constructor(root, text) {
+        super('ol', 'li', '+', text);
     }
-    return OList;
-}(ListContainer));
+}
 // : definition1 | description1
 // : definition2 | description2
 // : definition3 | description3
-var DList = /** @class */ (function (_super) {
-    __extends(DList, _super);
-    function DList(out) {
-        var _this = _super.call(this, 'dl', 'dt', ':', out[0]) || this;
-        _this.last = _super.prototype.insert.call(_this, new ListElement(_this.level, 'dd'));
+class DList extends ListContainer {
+    constructor(out) {
+        super('dl', 'dt', ':', out[0]);
+        this.last = super.insert(new ListElement(this.level, 'dd'));
         if (out[1] != '') {
-            _this.last = _this.last.insert(Factory_Inline(out[1]));
+            this.last = this.last.insert(Factory_Inline(out[1]));
         }
-        return _this;
     }
-    return DList;
-}(ListContainer));
+}
 // > Someting cited
 // > like E-mail text
-var BQuote = /** @class */ (function (_super) {
-    __extends(BQuote, _super);
-    function BQuote(root, text) {
-        var _this = _super.call(this) || this;
-        var head = text.substr(0, 1);
-        _this.level = Math.min(3, strspn(text, head));
-        text = ltrim(text.substr(_this.level));
+class BQuote extends BElement {
+    constructor(root, text) {
+        super();
+        let head = text.substr(0, 1);
+        this.level = Math.min(3, strspn(text, head));
+        text = ltrim(text.substr(this.level));
         if (head === '<') {
-            var level = _this.level;
-            _this.level = 0;
-            _this.last = _this.end(root, level);
+            let level = this.level;
+            this.level = 0;
+            this.last = this.end(root, level);
             if (text != '')
-                _this.last = _this.last.insert(Factory_Inline(text));
+                this.last = this.last.insert(Factory_Inline(text));
         }
         else {
-            _this.insert(Factory_Inline(text));
+            this.insert(Factory_Inline(text));
         }
-        return _this;
     }
-    BQuote.prototype.canContain = function (obj) {
+    canContain(obj) {
         return (!(obj instanceof BQuote) || obj.level >= this.level);
-    };
-    BQuote.prototype.insert = function (obj) {
+    }
+    insert(obj) {
         // BugTrack/521, BugTrack/545
         /*if (is_a(obj, 'inline'))
             return super.insert(obj.toPara(' class="quotation"'));*/
@@ -415,13 +367,13 @@ var BQuote = /** @class */ (function (_super) {
                 obj = obj.elements[0];
             }
         }
-        return _super.prototype.insert.call(this, obj);
-    };
-    BQuote.prototype.toString = function () {
-        return this.wrap(_super.prototype.toString.call(this), 'blockquote');
-    };
-    BQuote.prototype.end = function (root, level) {
-        var parent = root.last;
+        return super.insert(obj);
+    }
+    toString() {
+        return this.wrap(super.toString(), 'blockquote');
+    }
+    end(root, level) {
+        let parent = root.last;
         while (parent) {
             if (parent instanceof BQuote && parent.level === level) {
                 return parent.parent;
@@ -429,72 +381,67 @@ var BQuote = /** @class */ (function (_super) {
             parent = parent.parent;
         }
         return this;
-    };
-    return BQuote;
-}(BElement));
-var TableCell = /** @class */ (function (_super) {
-    __extends(TableCell, _super);
-    function TableCell(text, is_template) {
-        if (is_template === void 0) { is_template = false; }
-        var _this = _super.call(this) || this;
-        _this.tag = 'td'; // {td|th}
-        _this.colspan = 1;
-        _this.rowspan = 1;
-        _this.style = [];
-        var matches = [];
-        var reg = /^(?:(LEFT|CENTER|RIGHT)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\d+)\)):(.*)/;
+    }
+}
+class TableCell extends BElement {
+    constructor(text, is_template = false) {
+        super();
+        this.tag = 'td'; // {td|th}
+        this.colspan = 1;
+        this.rowspan = 1;
+        this.style = [];
+        let matches = [];
+        let reg = /^(?:(LEFT|CENTER|RIGHT)|(BG)?COLOR\(([#\w]+)\)|SIZE\((\d+)\)):(.*)/;
         while (reg.test(text)) {
             matches = text.match(reg);
             if (matches[1]) {
-                _this.style['align'] = 'text-align:' + matches[1].toLowerCase() + ';';
+                this.style['align'] = 'text-align:' + matches[1].toLowerCase() + ';';
                 text = matches[5];
             }
             else if (matches[3]) {
-                var name_1 = matches[2] ? 'background-color' : 'color';
-                _this.style[name_1] = name_1 + ':' + htmlsc(matches[3]) + ';';
+                let name = matches[2] ? 'background-color' : 'color';
+                this.style[name] = name + ':' + htmlsc(matches[3]) + ';';
                 text = matches[5];
             }
             else if (matches[4]) {
-                _this.style['size'] = 'font-size:' + htmlsc(matches[4]) + 'px;';
+                this.style['size'] = 'font-size:' + htmlsc(matches[4]) + 'px;';
                 text = matches[5];
             }
         }
         if (is_template && !Number.isNaN(Number(text)))
-            _this.style['width'] = 'width:' + text + 'px;';
+            this.style['width'] = 'width:' + text + 'px;';
         if (text === '>') {
-            _this.colspan = 0;
+            this.colspan = 0;
         }
         else if (text === '~') {
-            _this.rowspan = 0;
+            this.rowspan = 0;
         }
         else if (text.substr(0, 1) === '~') {
-            _this.tag = 'th';
+            this.tag = 'th';
             text = text.substr(1);
         }
-        var obj;
+        let obj;
         if (text != '' && text[0] === '#') {
             // Try using Div class for this text
-            obj = Factory_Div(_this, text);
+            obj = Factory_Div(this, text);
             if (obj instanceof Paragraph)
                 obj = obj.elements[0];
         }
         else {
             obj = Factory_Inline(text);
         }
-        _this.insert(obj);
-        return _this;
+        this.insert(obj);
     }
-    TableCell.prototype.setStyle = function (style) {
-        var _this = this;
-        style.forEach(function (val, key) {
-            if (!_this.style[key])
-                _this.style[key] = val;
+    setStyle(style) {
+        style.forEach((val, key) => {
+            if (!this.style[key])
+                this.style[key] = val;
         });
-    };
-    TableCell.prototype.toString = function () {
+    }
+    toString() {
         if (this.rowspan === 0 || this.colspan === 0)
             return '';
-        var param = ' class="style_' + this.tag + '"';
+        let param = ' class="style_' + this.tag + '"';
         if (this.rowspan > 1)
             param += ' rowspan="' + this.rowspan + '"';
         if (this.colspan > 1) {
@@ -503,44 +450,41 @@ var TableCell = /** @class */ (function (_super) {
         }
         if (this.style)
             param += ' style="' + this.style.join(' ') + '"';
-        return this.wrap(_super.prototype.toString.call(this), this.tag, param, false);
-    };
-    return TableCell;
-}(BElement));
+        return this.wrap(super.toString(), this.tag, param, false);
+    }
+}
 // | title1 | title2 | title3 |
 // | cell1  | cell2  | cell3  |
 // | cell4  | cell5  | cell6  |
-var Table = /** @class */ (function (_super) {
-    __extends(Table, _super);
-    function Table(out) {
-        var _this = _super.call(this) || this;
-        var cells = out[1].split('|');
-        _this.col = cells.length;
-        _this.type = out[2].toLowerCase();
-        _this.types = [_this.type];
-        var is_template = (_this.type === 'c');
-        var row = [];
-        cells.forEach(function (cell) {
+class Table extends BElement {
+    constructor(out) {
+        super();
+        let cells = out[1].split('|');
+        this.col = cells.length;
+        this.type = out[2].toLowerCase();
+        this.types = [this.type];
+        let is_template = (this.type === 'c');
+        let row = [];
+        cells.forEach(cell => {
             row.push(new TableCell(cell, is_template));
         });
-        _this.elements.push(row);
-        return _this;
+        this.elements.push(row);
     }
-    Table.prototype.canContain = function (obj) {
+    canContain(obj) {
         return obj instanceof Table && (obj.col === this.col);
-    };
-    Table.prototype.insert = function (obj) {
+    }
+    insert(obj) {
         this.elements.push(obj.elements[0]);
         this.types.push(obj.type);
         return this;
-    };
-    Table.prototype.toString = function () {
-        var _this = this;
-        var parts = { 'h': 'thead', 'f': 'tfoot', '': 'tbody' };
-        var _loop_1 = function (ncol) {
-            var rowspan = 1;
-            this_1.elements.reverse().forEach(function (val, nrow) {
-                var row = val;
+    }
+    toString() {
+        let parts = { 'h': 'thead', 'f': 'tfoot', '': 'tbody' };
+        // Set rowspan (from bottom, to top)
+        for (let ncol = 0; ncol < this.col; ncol++) {
+            let rowspan = 1;
+            this.elements.reverse().forEach((val, nrow) => {
+                let row = val;
                 if (row[ncol].rowspan === 0) {
                     rowspan++;
                     return;
@@ -548,23 +492,18 @@ var Table = /** @class */ (function (_super) {
                 row[ncol].rowspan = rowspan;
                 // Inherits row type
                 while (--rowspan)
-                    _this.types[nrow + rowspan] = _this.types[nrow];
+                    this.types[nrow + rowspan] = this.types[nrow];
                 rowspan = 1;
             });
-        };
-        var this_1 = this;
-        // Set rowspan (from bottom, to top)
-        for (var ncol = 0; ncol < this.col; ncol++) {
-            _loop_1(ncol);
         }
         // Set colspan and style
-        var stylerow = null;
-        this.elements.forEach(function (val, nrow) {
-            var row = val;
-            if (_this.types[nrow] === 'c')
+        let stylerow = null;
+        this.elements.forEach((val, nrow) => {
+            let row = val;
+            if (this.types[nrow] === 'c')
                 stylerow = row;
-            var colspan = 1;
-            row.forEach(function (c, ncol) {
+            let colspan = 1;
+            row.forEach((c, ncol) => {
                 if (row[ncol].colspan === 0) {
                     ++colspan;
                     return;
@@ -580,51 +519,43 @@ var Table = /** @class */ (function (_super) {
             });
         });
         // toString
-        var string = '';
-        var _loop_2 = function (type) {
-            var part_string = '';
-            this_2.elements.forEach(function (_, nrow) {
-                if (_this.types[nrow] != type) {
+        let string = '';
+        for (const type of Object.keys(parts)) {
+            let part_string = '';
+            this.elements.forEach((_, nrow) => {
+                if (this.types[nrow] != type) {
                     return;
                 }
-                var row = _this.elements[nrow];
-                var row_string = '';
-                row.forEach(function (_, ncol) {
+                let row = this.elements[nrow];
+                let row_string = '';
+                row.forEach((_, ncol) => {
                     row_string += row[ncol].toString();
                 });
-                part_string += _this.wrap(row_string, 'tr');
+                part_string += this.wrap(row_string, 'tr');
             });
-            string += this_2.wrap(part_string, parts[type]);
-        };
-        var this_2 = this;
-        for (var _i = 0, _a = Object.keys(parts); _i < _a.length; _i++) {
-            var type = _a[_i];
-            _loop_2(type);
+            string += this.wrap(part_string, parts[type]);
         }
         string = this.wrap(string, 'table', ' class="style_table" cellspacing="1" border="0"');
         return this.wrap(string, 'div', ' class="ie5"');
-    };
-    return Table;
-}(BElement));
+    }
+}
 // , cell1  , cell2  ,  cell3 
 // , cell4  , cell5  ,  cell6 
 // , cell7  ,        right,==
 // ,left          ,==,  cell8
-var YTable = /** @class */ (function (_super) {
-    __extends(YTable, _super);
+class YTable extends BElement {
     // TODO: Seems unable to show literal '==' without tricks.
     //       But it will be imcompatible.
     // TODO: Why toString() or toXHTML() here
-    function YTable(row) {
-        if (row === void 0) { row = ['cell1 ', ' cell2 ', ' cell3']; }
-        var _this = _super.call(this) || this;
-        var str = [];
-        var col = row.length;
-        var matches = [];
-        var _value = [];
-        var _align = [];
-        row.forEach(function (cell) {
-            var match = cell.match(/^(\s+)?(.+?)(\s+)?/);
+    constructor(row = ['cell1 ', ' cell2 ', ' cell3']) {
+        super();
+        let str = [];
+        let col = row.length;
+        let matches = [];
+        let _value = [];
+        let _align = [];
+        row.forEach(cell => {
+            let match = cell.match(/^(\s+)?(.+?)(\s+)?/);
             if (match) {
                 if (matches[2] === '==') {
                     // Colspan
@@ -649,137 +580,123 @@ var YTable = /** @class */ (function (_super) {
                 _align.push('');
             }
         });
-        for (var i = 0; i < col; i++) {
+        for (let i = 0; i < col; i++) {
             if (_value[i] === false)
                 continue;
-            var colspan = 1;
+            let colspan = 1;
             while (_value[i + colspan] && _value[i + colspan] === false)
                 ++colspan;
-            var _colspan = (colspan > 1) ? ' colspan="' + colspan + '"' : '';
-            var align = _align[i] ? ' style="text-align:' + _align[i] + '"' : '';
+            let _colspan = (colspan > 1) ? ' colspan="' + colspan + '"' : '';
+            let align = _align[i] ? ' style="text-align:' + _align[i] + '"' : '';
             str.push('<td class="style_td"' + align + _colspan + '>');
             str.push(_value[i]);
             str.push('</td>');
             delete _value[i];
             delete _align[i];
         }
-        _this.col = col;
-        _this.elements.push(str.join(''));
-        return _this;
+        this.col = col;
+        this.elements.push(str.join(''));
     }
-    YTable.prototype.canContain = function (obj) {
+    canContain(obj) {
         return obj instanceof YTable && (obj.col === this.col);
-    };
-    YTable.prototype.insert = function (obj) {
+    }
+    insert(obj) {
         this.elements.push(obj.elements[0]);
         return this;
-    };
-    YTable.prototype.toString = function () {
-        var rows = '';
-        this.elements.forEach(function (str) {
+    }
+    toString() {
+        let rows = '';
+        this.elements.forEach(str => {
             rows += "\n" + '<tr class="style_tr">' + str + '</tr>' + "\n";
         });
         rows = this.wrap(rows, 'table', ' class="style_table" cellspacing="1" border="0"');
         return this.wrap(rows, 'div', ' class="ie5"');
-    };
-    return YTable;
-}(BElement));
-// ' 'Space-beginning sentence
-// ' 'Space-beginning sentence
-// ' 'Space-beginning sentence
-var Pre = /** @class */ (function (_super) {
-    __extends(Pre, _super);
-    function Pre(root, text) {
-        var _this = _super.call(this) || this;
-        _this.elements.push(htmlsc((!preformat_ltrim || text === '' || text[0] != ' ') ? text : text.substr(1)));
-        return _this;
     }
-    Pre.prototype.canContain = function (obj) {
+}
+// ' 'Space-beginning sentence
+// ' 'Space-beginning sentence
+// ' 'Space-beginning sentence
+class Pre extends BElement {
+    constructor(root, text) {
+        super();
+        this.elements.push(htmlsc((!preformat_ltrim || text === '' || text[0] != ' ') ? text : text.substr(1)));
+    }
+    canContain(obj) {
         return obj instanceof Pre;
-    };
-    Pre.prototype.insert = function (obj) {
+    }
+    insert(obj) {
         this.elements.push(obj.elements[0]);
         return this;
-    };
-    Pre.prototype.toString = function () {
-        return this.wrap(this.elements.join("\n"), 'pre');
-    };
-    return Pre;
-}(BElement));
-// Block plugin: #something (started with '#')
-var Div = /** @class */ (function (_super) {
-    __extends(Div, _super);
-    function Div(out) {
-        var _this = _super.call(this) || this;
-        _a = out[1], _this.name = _a === void 0 ? '' : _a, _b = out[2], _this.param = _b === void 0 ? '' : _b;
-        return _this;
-        var _a, _b;
     }
-    Div.prototype.canContain = function (obj) {
+    toString() {
+        return this.wrap(this.elements.join("\n"), 'pre');
+    }
+}
+// Block plugin: #something (started with '#')
+class Div extends BElement {
+    constructor(out) {
+        super();
+        [, this.name = '', this.param = ''] = out;
+    }
+    canContain(obj) {
         return false;
-    };
-    Div.prototype.toString = function () {
+    }
+    toString() {
         // Call #plugin
         return '#' + this.name;
         //return do_plugin_convert(this.name, this.param);
-    };
-    return Div;
-}(BElement));
-// LEFT:/CENTER:/RIGHT:
-var Align = /** @class */ (function (_super) {
-    __extends(Align, _super);
-    function Align(align) {
-        var _this = _super.call(this) || this;
-        _this.align = align;
-        return _this;
     }
-    Align.prototype.canContain = function (obj) {
+}
+// LEFT:/CENTER:/RIGHT:
+class Align extends BElement {
+    constructor(align) {
+        super();
+        this.align = align;
+    }
+    canContain(obj) {
         return obj instanceof Inline;
-    };
-    Align.prototype.toString = function () {
-        return this.wrap(_super.prototype.toString.call(this), 'div', ' style="text-align:' + this.align + '"');
-    };
-    return Align;
-}(BElement));
+    }
+    toString() {
+        return this.wrap(super.toString(), 'div', ' style="text-align:' + this.align + '"');
+    }
+}
 // Body
-var Body = /** @class */ (function (_super) {
-    __extends(Body, _super);
-    function Body(id) {
-        var _this = _super.call(this) || this;
-        _this.count = 0;
-        _this.classes = {
+class Body extends BElement {
+    constructor(id) {
+        super();
+        this.count = 0;
+        this.classes = {
             '-': 'UList',
             '+': 'OList',
             '>': 'BQuote',
             '<': 'BQuote'
         };
-        _this.factories = {
+        this.factories = {
             ':': 'DList',
             '|': 'Table',
             ',': 'YTable',
             '#': 'Div'
         };
-        _this.id = id;
-        _this.contents = new BElement();
-        _this.contents_last = _this.contents;
-        return _this;
+        this.id = id;
+        this.contents = new BElement();
+        this.contents_last = this.contents;
     }
-    Body.prototype.parse = function (lines) {
+    parse(lines) {
         this.last = this;
-        var matches = [];
+        let matches = [];
         while (lines.length !== 0) {
             console.log(lines);
-            var line = lines.shift();
+            let line = lines.shift();
             // Escape comments
             if (line.substr(0, 2) === '//')
                 continue;
-            var matches_1 = line.match(/^(LEFT|CENTER|RIGHT):(.*)/);
-            if (matches_1) {
+            let matches = line.match(/^(LEFT|CENTER|RIGHT):(.*)/);
+            if (matches) {
                 // <div style="text-align:...">
-                this.last = this.last.add(new Align(matches_1[1].toLowerCase()));
-                if (matches_1[2] === '')
+                this.last = this.last.add(new Align(matches[1].toLowerCase()));
+                if (matches[2] === '')
                     continue;
-                line = matches_1[2];
+                line = matches[2];
             }
             line = rtrim(line, /^[\r\n]+/);
             // Empty
@@ -793,7 +710,7 @@ var Body = /** @class */ (function (_super) {
                 continue;
             }
             // The first character
-            var head = line[0];
+            let head = line[0];
             // Heading
             if (head === '*') {
                 this.insert(new Heading(this, line));
@@ -806,30 +723,30 @@ var Body = /** @class */ (function (_super) {
             }
             // Line Break
             if (line.substr(-1) === '~')
-                line = line.substr(0, -1) + "\r";
+                line = line.substr(0, line.length - 1) + "\n";
             // Other Character
             if (this.classes[head]) {
-                var classname = this.classes[head];
+                let classname = this.classes[head];
                 this.last = this.last.add(eval("new " + classname + "(this, line)"));
                 continue;
             }
             // Other Character
             if (this.factories[head]) {
-                var factoryname = 'Factory_' + this.factories[head];
+                let factoryname = 'Factory_' + this.factories[head];
                 this.last = this.last.add(eval(factoryname + "(this, line)"));
                 continue;
             }
             // Default
             this.last = this.last.add(Factory_Inline(line));
         }
-    };
-    Body.prototype.getAnchor = function (text, level) {
+    }
+    getAnchor(text, level) {
         // Heading id (auto-generated)
-        var autoid = 'content_' + this.id + '_' + this.count;
+        let autoid = 'content_' + this.id + '_' + this.count;
         this.count++;
         // Heading id (specified by users)
-        var id = make_heading(text, false); // Cut fixed-anchor from text
-        var anchor;
+        let id = make_heading(text, false); // Cut fixed-anchor from text
+        let anchor;
         if (id === '') {
             // Not specified
             id = autoid;
@@ -843,48 +760,45 @@ var Body = /** @class */ (function (_super) {
         this.contents_last = this.contents_last.add(new Contents_UList(text, level, id));
         // Add heding
         return [text + anchor, this.count > 1 ? "\n" + msg_content_back_to_top : '', autoid];
-    };
-    Body.prototype.insert = function (obj) {
+    }
+    insert(obj) {
         if (obj instanceof Inline)
             obj = obj.toPara();
-        return _super.prototype.insert.call(this, obj);
-    };
-    Body.prototype.toString = function () {
-        var text = _super.prototype.toString.call(this);
+        return super.insert(obj);
+    }
+    toString() {
+        let text = super.toString();
         // #contents
         text = text.replace(/<#_contents_>/, this.replace_contents);
         return text + "\n";
-    };
-    Body.prototype.replace_contents = function (arr) {
+    }
+    replace_contents(arr) {
         return '<div class="contents">' + "\n" +
             '<a id="contents_' + this.id + '"></a>' + "\n" +
             this.contents.toString() + "\n" +
             '</div>' + "\n";
-    };
-    return Body;
-}(BElement));
-var Contents_UList = /** @class */ (function (_super) {
-    __extends(Contents_UList, _super);
-    function Contents_UList(text, level, id) {
-        var _this = 
+    }
+}
+class Contents_UList extends ListContainer {
+    constructor(text, level, id) {
         // Reformatting text
         // A line started with "\n" means "preformatted" ... X(
-        _super.call(this, 'ul', 'li', '-', '-'.repeat(level)) || this;
+        super('ul', 'li', '-', '-'.repeat(level));
         make_heading(text); // GLOB
-        text = "\n<a href=\"#" + id + "\">" + text + "</a>\n";
-        _super.prototype.insert.call(_this, Factory_Inline(text));
-        return _this;
+        text = `
+<a href="#${id}">${text}</a>
+`;
+        super.insert(Factory_Inline(text));
     }
-    Contents_UList.prototype.setParent = function (parent) {
-        _super.prototype.setParent.call(this, parent);
-        var step = this.level;
-        var margin = this.left_margin;
+    setParent(parent) {
+        super.setParent(parent);
+        let step = this.level;
+        let margin = this.left_margin;
         if (parent.parent && parent.parent instanceof ListContainer) {
             step -= parent.parent.level;
             margin = 0;
         }
         margin += this.margin * (step === this.level ? 1 : step);
         this.style = _list_pad_str(this.level, margin, margin);
-    };
-    return Contents_UList;
-}(ListContainer));
+    }
+}
